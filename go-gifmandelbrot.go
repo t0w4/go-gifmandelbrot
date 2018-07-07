@@ -2,6 +2,7 @@
 package main
 
 import (
+	"flag"
 	"image"
 	"image/color"
 	"image/gif"
@@ -19,9 +20,16 @@ const (
 	delay                  = 8   // 10ms単位でのフレーム間の遅延
 )
 
+var powArg float64
+
+func init()  {
+	flag.Float64Var(&powArg,"pow", 2.0, "ext) ./go-gifmandelbrot -pow=2.0")
+}
+
 func main() {
+	flag.Parse()
 	anim := gif.GIF{LoopCount: nframes}
-	for pow := 1.0; pow < 10.0; pow += 0.02 {
+	for pow := 1.0; pow < powArg; pow += 0.02 {
 		draw(&anim, pow)
 	}
 	// gif に保存する
