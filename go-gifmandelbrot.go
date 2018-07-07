@@ -8,6 +8,7 @@ import (
 	"image/gif"
 	"math/cmplx"
 	"os"
+	"sync"
 )
 
 var palette = []color.Color{color.White, color.Black}
@@ -54,15 +55,27 @@ func draw(anim *gif.GIF, pow float64) {
 	rect := image.Rect(0, 0, width, height)
 	img := image.NewPaletted(rect, palette)
 
+	var wg sync.WaitGroup
 	for py := 0; py < height; py++ {
-		y := float64(py)/height*(ymax-ymin) + ymin
 		for px := 0; px < width; px++ {
-			x := float64(px)/width*(xmax-xmin) + xmin
-			z := complex(x, y)
-			// 画像の点(px, py)は複素数値zを表している。
-			img.Set(px, py, mandelbrot(z, pow))
+			x := px
+			y := py
+			wg.Add(1)
+			go func() {
+				plot(img, x, y, pow)
+				wg.Done()
+			}()
 		}
 	}
+	wg.Wait()
 	anim.Delay = append(anim.Delay, delay)
 	anim.Image = append(anim.Image, img)
+}
+
+func plot(img *image.Paletted, px int, py int, pow float64)  {
+	y := float64(py)/height*(ymax-ymin) + ymin
+	x := float64(px)/width*(xmax-xmin) + xmin
+	z := complex(x, y)
+	// 画像の点(px, py)は複素数値zを表している。
+	img.Set(px, py, mandelbrot(z, pow))
 }
