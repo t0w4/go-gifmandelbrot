@@ -62,8 +62,8 @@ func draw(anim *gif.GIF, pow float64) {
 			y := py
 			wg.Add(1)
 			go func() {
+				defer wg.Done()
 				plot(img, x, y, pow)
-				wg.Done()
 			}()
 		}
 	}
