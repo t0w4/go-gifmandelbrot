@@ -5,13 +5,14 @@ import (
 	"flag"
 	"image"
 	"image/color"
+	palette2 "image/color/palette"
 	"image/gif"
 	"math/cmplx"
 	"os"
 	"sync"
 )
 
-var palette = []color.Color{color.White, color.Black}
+var palette = palette2.Plan9
 
 const (
 	xmin, ymin, xmax, ymax = -2, -2, +2, +2
